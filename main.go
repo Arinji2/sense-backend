@@ -17,7 +17,8 @@ func main() {
 		w.Write([]byte("Sense Backend: Request Received"))
 		render.Status(r, 200)
 
-		PocketbaseAdminLogin()
+		token := PocketbaseAdminLogin()
+		fmt.Println(token)
 
 	})
 	http.ListenAndServe(":3000", r)
