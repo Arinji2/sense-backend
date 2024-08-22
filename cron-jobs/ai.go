@@ -61,8 +61,6 @@ func generateWord(level int, fake bool, accessKey string, response chan<- genera
 		return
 	}
 
-	fmt.Println(message)
-
 	parts := strings.SplitN(message, ";", 2)
 	if len(parts) < 2 {
 		if retries > 0 {
@@ -76,11 +74,10 @@ func generateWord(level int, fake bool, accessKey string, response chan<- genera
 	word := strings.TrimSpace(parts[0])
 	definition := strings.TrimSpace(parts[1])
 
-	fmt.Println(word, definition)
-
 	response <- generatedWord{
 		word:       word,
 		definition: definition,
 		isFake:     fake,
+		level:      level,
 	}
 }
