@@ -19,7 +19,8 @@ func difficultyAmount(difficulty int, address string, client *api.ApiClient, tok
 
 	result, err := client.SendRequestWithQuery("GET", address, map[string]string{
 		"perPage": "1",
-		"filter":  fmt.Sprintf("level='%d'", difficulty)}, token)
+		"filter":  fmt.Sprintf("level='%d'", difficulty)}, map[string]string{
+		"AUTHORIZATION": token})
 
 	if err != nil {
 		log.Printf("error in fetching for difficulty %d: %v", difficulty, err)

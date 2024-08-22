@@ -22,7 +22,7 @@ func main() {
 		token := pocketbase.PocketbaseAdminLogin()
 		fmt.Println(token)
 
-		cronjobs.GetLevel("real_words")
+		fmt.Println(cronjobs.GetLevel("real_words"))
 
 	})
 	http.ListenAndServe(":3000", r)

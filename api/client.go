@@ -37,11 +37,11 @@ func NewApiClient(baseURL string) *ApiClient {
 	}
 }
 
-func (c *ApiClient) doRequest(req *http.Request, authToken ...string) (map[string]interface{}, error) {
+func (c *ApiClient) doRequest(req *http.Request, headers map[string]string) (map[string]interface{}, error) {
 
 	req.Header.Set("Content-Type", "application/json")
-	if len(authToken) != 0 && authToken[0] != "" {
-		req.Header.Set("Authorization", authToken[0])
+	for key, val := range headers {
+		req.Header.Set(key, val)
 	}
 	resp, err := c.Client.Do(req)
 
@@ -63,7 +63,8 @@ func (c *ApiClient) doRequest(req *http.Request, authToken ...string) (map[strin
 
 }
 
-func (c *ApiClient) SendRequestWithBody(method, path string, body interface{}, authToken ...string) (map[string]interface{}, error) {
+func (c *ApiClient) SendRequestWithBody(method, path string, body interface{}, headers map[string]string) (map[string]interface{}, error) {
+
 	address := fmt.Sprintf("%s%s", c.BaseURL, path)
 	jsonBody, err := json.Marshal(body)
 
@@ -76,7 +77,7 @@ func (c *ApiClient) SendRequestWithBody(method, path string, body interface{}, a
 		return nil, fmt.Errorf("error creating request: %w", err)
 	}
 
-	result, err := c.doRequest(req, authToken...)
+	result, err := c.doRequest(req, headers)
 
 	if err != nil {
 		return nil, fmt.Errorf("error from request doer %w", err)
@@ -86,7 +87,7 @@ func (c *ApiClient) SendRequestWithBody(method, path string, body interface{}, a
 
 }
 
-func (c *ApiClient) SendRequestWithQuery(method, path string, query map[string]string, authToken ...string) (map[string]interface{}, error) {
+func (c *ApiClient) SendRequestWithQuery(method, path string, query map[string]string, headers map[string]string) (map[string]interface{}, error) {
 
 	queryParams := url.Values{}
 	for key, value := range query {
@@ -103,7 +104,7 @@ func (c *ApiClient) SendRequestWithQuery(method, path string, query map[string]s
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
 	}
-	result, err := c.doRequest(req, authToken...)
+	result, err := c.doRequest(req, headers)
 
 	if err != nil {
 		return nil, fmt.Errorf("error from request doer %w", err)
