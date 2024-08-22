@@ -1,7 +1,9 @@
-package main
+package pocketbase
 
 import (
 	"log"
+	"sync"
+	"time"
 
 	"os"
 
@@ -9,9 +11,23 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var pbLink = "https://db-word.arinji.com"
+var (
+	pbLink      = "https://db-word.arinji.com"
+	tokenCache  string
+	expiryCache time.Time
+	mu          sync.Mutex
+)
+
+const tokenValidity = 604800 * time.Second // 7 days
 
 func PocketbaseAdminLogin() string {
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if time.Now().Before(expiryCache) && tokenCache != "" {
+		return tokenCache
+	}
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -41,6 +57,9 @@ func PocketbaseAdminLogin() string {
 	if !ok || token == "" {
 		log.Fatalf("Token not found or not a string")
 	}
+
+	tokenCache = token
+	expiryCache = time.Now().Add(tokenValidity)
 
 	return token
 

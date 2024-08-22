@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Arinji2/sense-backend/pocketbase"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
@@ -17,7 +18,7 @@ func main() {
 		w.Write([]byte("Sense Backend: Request Received"))
 		render.Status(r, 200)
 
-		token := PocketbaseAdminLogin()
+		token := pocketbase.PocketbaseAdminLogin()
 		fmt.Println(token)
 
 	})
