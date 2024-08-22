@@ -25,5 +25,5 @@ func main() {
 		cronjobs.InsertWords()
 
 	})
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":3001", r)
 }
