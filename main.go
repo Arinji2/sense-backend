@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	cronjobs "github.com/Arinji2/sense-backend/cron-jobs"
 	"github.com/Arinji2/sense-backend/pocketbase"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -20,6 +21,8 @@ func main() {
 
 		token := pocketbase.PocketbaseAdminLogin()
 		fmt.Println(token)
+
+		cronjobs.GetLevel("real_words")
 
 	})
 	http.ListenAndServe(":3000", r)

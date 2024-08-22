@@ -4,8 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type HTTPClient interface {
@@ -18,6 +22,15 @@ type ApiClient struct {
 }
 
 func NewApiClient(baseURL string) *ApiClient {
+
+	if baseURL == "" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file, in API Client Init")
+
+		}
+		baseURL = os.Getenv("PB_LINK")
+	}
 	return &ApiClient{
 		BaseURL: baseURL,
 		Client:  &http.Client{},

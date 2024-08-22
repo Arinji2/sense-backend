@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	pbLink      = "https://db-word.arinji.com"
 	tokenCache  string
 	expiryCache time.Time
 	mu          sync.Mutex
@@ -47,7 +46,7 @@ func PocketbaseAdminLogin() string {
 		"password": password,
 	}
 
-	client := api.NewApiClient(pbLink)
+	client := api.NewApiClient("")
 	result, err := client.SendRequestWithBody("POST", "/api/admins/auth-with-password", body)
 
 	if err != nil {
