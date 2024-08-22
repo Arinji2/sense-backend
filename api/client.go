@@ -21,18 +21,24 @@ type ApiClient struct {
 	Client  HTTPClient
 }
 
-func NewApiClient(baseURL string) *ApiClient {
+func NewApiClient(baseURL ...string) *ApiClient {
+	var url string
+	if len(baseURL) > 0 {
+		url = baseURL[0]
+	} else {
+		url = ""
+	}
 
-	if baseURL == "" {
+	if url == "" {
 		err := godotenv.Load()
 		if err != nil {
 			log.Fatal("Error loading .env file, in API Client Init")
-
 		}
-		baseURL = os.Getenv("PB_LINK")
+		url = os.Getenv("PB_LINK")
 	}
+
 	return &ApiClient{
-		BaseURL: baseURL,
+		BaseURL: url,
 		Client:  &http.Client{},
 	}
 }

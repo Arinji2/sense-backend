@@ -46,7 +46,7 @@ func PocketbaseAdminLogin() string {
 		"password": password,
 	}
 
-	client := api.NewApiClient("")
+	client := api.NewApiClient()
 	result, err := client.SendRequestWithBody("POST", "/api/admins/auth-with-password", body, nil)
 
 	if err != nil {
