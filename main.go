@@ -36,6 +36,12 @@ func main() {
 		render.Status(r, 200)
 	})
 
+	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Sense Backend: Health Check")
+		w.Write([]byte("Sense Backend: Health Check"))
+		render.Status(r, 200)
+	})
+
 	go startCronJob()
 
 	http.ListenAndServe(":8080", r)
