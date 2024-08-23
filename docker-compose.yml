@@ -19,9 +19,8 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-    command: serve --http=0.0.0.0:8090 --dir=/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8090/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:51/api/health"]
       interval: 30s
       retries: 3
       start_period: 10s
