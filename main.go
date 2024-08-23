@@ -22,7 +22,7 @@ func main() {
 
 	go startCronJob()
 
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":8080", r)
 }
 
 func startCronJob() {
