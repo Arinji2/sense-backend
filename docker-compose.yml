@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ACCESS_KEY=${ACCESS_KEY}
+      - WORDS_TO_GENERATE=${WORDS_TO_GENERATE}
+      - WORDS_TO_DELETE=${WORDS_TO_DELETE}
+
+  pocketbase:
+    image: ghcr.io/muchobien/pocketbase:latest
+    ports:
+      - "7005:8090"
+    volumes:
+      - /srv/dockerdata/Pocketbase/Word/pb_data:/pb_data
+    networks:
+      - app-network
+    restart: unless-stopped
+    command: serve --http=0.0.0.0:8090 --dir=/pb_data --publicDir=/pb_public --hooksDir=/pb_hooks
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/api/health"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+
+networks:
+  app-network:
+    driver: bridge
