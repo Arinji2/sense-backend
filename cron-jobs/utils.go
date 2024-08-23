@@ -9,7 +9,7 @@ import (
 	"github.com/Arinji2/sense-backend/api"
 )
 
-const wordsToDelete = 100
+const wordsToDelete = 200
 
 func getRandomLetter() string {
 
