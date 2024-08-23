@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -30,10 +29,7 @@ func NewApiClient(baseURL ...string) *ApiClient {
 	}
 
 	if url == "" {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatal("Error loading .env file, in API Client Init")
-		}
+		godotenv.Load()
 		url = os.Getenv("PB_LINK")
 	}
 

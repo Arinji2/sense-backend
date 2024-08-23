@@ -10,12 +10,16 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    env_file:
+      - .stack.env
+      - .env
     healthcheck:
       test: ["CMD", "wget", "--spider", "http://backend:8080/health"]
       interval: 30s
       retries: 3
       start_period: 10s
       timeout: 10s
+
   pocketbase:
     image: ghcr.io/muchobien/pocketbase:latest
     ports:

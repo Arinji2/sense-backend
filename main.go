@@ -20,7 +20,15 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println(os.Environ())
+		isProduction := os.Getenv("ENVIRONMENT") == "PRODUCTION"
+		if !isProduction {
+			log.Fatal("Error loading .env file")
+		} else {
+			fmt.Println("Using Production Environment")
+		}
+	} else {
+		fmt.Println("Using Development Environment")
 	}
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		key := r.URL.Query()["key"]

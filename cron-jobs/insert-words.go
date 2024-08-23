@@ -32,11 +32,7 @@ func InsertWords() {
 	fakeLevel := getLevel("fake_words", token)
 	realLevel := getLevel("real_words", token)
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
+	godotenv.Load()
 	accessKey := os.Getenv("ACCESS_KEY")
 	wordsToGenerate := os.Getenv("WORDS_TO_GENERATE")
 	if wordsToGenerate == "" {

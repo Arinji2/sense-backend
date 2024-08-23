@@ -19,10 +19,7 @@ func ResetWords() {
 	tables := []string{"fake_words", "real_words"}
 	client := api.NewApiClient()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
 	wordsToDelete := os.Getenv("WORDS_TO_DELETE")
 	if wordsToDelete == "" {
 		wordsToDelete = "200"

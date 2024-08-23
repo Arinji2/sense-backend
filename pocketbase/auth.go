@@ -27,12 +27,7 @@ func PocketbaseAdminLogin() string {
 	if time.Now().Before(expiryCache) && tokenCache != "" {
 		return tokenCache
 	}
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-
-	}
-
+	godotenv.Load()
 	identityEmail := os.Getenv("ADMIN_EMAIL")
 	password := os.Getenv("ADMIN_PASSWORD")
 
