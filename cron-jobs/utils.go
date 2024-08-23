@@ -9,6 +9,8 @@ import (
 	"github.com/Arinji2/sense-backend/api"
 )
 
+const wordsToDelete = 100
+
 func getRandomLetter() string {
 
 	letters := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -90,4 +92,95 @@ func getLevel(table string, token string) difficultyChannel {
 	}
 
 	return selectedDifficulty
+}
+
+func levelDeletion(level int, address string, client *api.ApiClient, token string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	deleteWg := sync.WaitGroup{}
+	result, err := client.SendRequestWithQuery("GET", address, map[string]string{
+		"perPage": "1",
+		"page":    "1",
+		"filter":  fmt.Sprintf("level='%d'", level)}, map[string]string{
+		"AUTHORIZATION": token})
+
+	if err != nil {
+		log.Printf("error in fetching for level %d: %v", level, err)
+		return
+	}
+
+	totalItems, ok := result["totalItems"].(float64)
+	if !ok {
+		log.Println("Error in parsing totalItems")
+		return
+	}
+
+	fmt.Println("Total items for level", level, ":", totalItems)
+
+	if totalItems <= wordsToDelete {
+		return
+	}
+
+	result, err = client.SendRequestWithQuery("GET", address, map[string]string{
+		"perPage": "30",
+		"page":    "1",
+		"sort":    "created",
+		"fields":  "id",
+		"filter":  fmt.Sprintf("level='%d'", level)}, map[string]string{
+		"AUTHORIZATION": token})
+
+	if err != nil {
+		log.Printf("error in fetching for level %d: %v", level, err)
+		return
+	}
+	fmt.Println(result)
+	items, ok := result["items"].([]interface{})
+	if !ok {
+		log.Println("Error in parsing items")
+		return
+	}
+
+	// Slice to store the extracted IDs
+	var ids []string
+
+	for _, item := range items {
+		itemMap, ok := item.(map[string]interface{})
+		if !ok {
+			log.Println("Error in parsing item map")
+			continue
+		}
+
+		id, ok := itemMap["id"].(string)
+		if !ok {
+			log.Println("Error in parsing item id")
+			continue
+		}
+
+		// Add the ID to the slice
+		ids = append(ids, id)
+	}
+
+	fmt.Println("IDs:", ids)
+
+	fmt.Printf("Deleting %d words for level %d\n", len(ids), level)
+
+	for _, item := range ids {
+		deleteWg.Add(1)
+		go func(wordID string) {
+
+			defer deleteWg.Done()
+			_, err := client.SendRequestWithBody("DELETE", fmt.Sprintf("%s/%s", address, item), nil, map[string]string{
+				"AUTHORIZATION": token})
+
+			if err != nil {
+				log.Printf("error in deleting word %s: %v", item, err)
+			}
+
+			fmt.Println("Deleted word", item)
+
+		}(item)
+	}
+
+	deleteWg.Wait()
+
 }

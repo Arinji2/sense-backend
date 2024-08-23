@@ -56,11 +56,15 @@ func (c *ApiClient) doRequest(req *http.Request, headers map[string]string) (map
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent {
 		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
 	var result map[string]interface{}
+
+	if resp.StatusCode == http.StatusNoContent {
+		return result, nil
+	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
