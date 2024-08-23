@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	cronjobs "github.com/Arinji2/sense-backend/cron-jobs"
@@ -24,21 +23,17 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		key := r.URL.Query()["key"]
+		if len(key) != 0 {
+			if key[0] == os.Getenv("ACCESS_KEY") {
+				fmt.Println("RUNNING TASKS")
+				cronjobs.InsertWords()
+				cronjobs.ResetWords()
+			}
+		}
 		fmt.Println("Sense Backend: Request Received")
 		w.Write([]byte("Sense Backend: Request Received"))
 		render.Status(r, 200)
-	})
-
-	r.Get("/env", func(w http.ResponseWriter, r *http.Request) {
-		keys := os.Environ()
-
-		for _, key := range keys {
-			val := strings.Split(key, "=")
-
-			fmt.Println(val[0])
-		}
-
-		render.Status(r, 404)
 	})
 
 	go startCronJob()
