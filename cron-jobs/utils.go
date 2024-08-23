@@ -29,6 +29,19 @@ func getDifficultyLevel(level int) string {
 	}
 }
 
+func filterWords(words []generatedWord) []generatedWord {
+	var filteredWords []generatedWord
+
+	for _, word := range words {
+		if word.word == "FAIL" {
+			continue
+		}
+		filteredWords = append(filteredWords, word)
+	}
+
+	return filteredWords
+}
+
 func difficultyAmount(difficulty int, address string, client *api.ApiClient, token string, response chan difficultyChannel, wg *sync.WaitGroup) {
 	defer wg.Done()
 

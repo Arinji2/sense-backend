@@ -97,6 +97,9 @@ func InsertWords() {
 		realWords = append(realWords, word)
 	}
 
+	fakeWords = filterWords(fakeWords)
+	realWords = filterWords(realWords)
+
 	fmt.Println("WORDS GENERATED")
 
 	processWords := func(data []generatedWord) {
