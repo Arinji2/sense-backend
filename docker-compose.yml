@@ -20,7 +20,7 @@ services:
       - app-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:51/api/health"]
+      test: ["CMD", "wget", "--spider", "http://localhost:51/api/health"]
       interval: 30s
       retries: 3
       start_period: 10s
