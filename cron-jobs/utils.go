@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+
 	"sync"
 
 	"github.com/Arinji2/sense-backend/api"
@@ -107,7 +108,7 @@ func getLevel(table string, token string) difficultyChannel {
 	return selectedDifficulty
 }
 
-func levelDeletion(level int, address string, client *api.ApiClient, token string, wg *sync.WaitGroup) {
+func levelDeletion(level int, address string, client *api.ApiClient, token string, wg *sync.WaitGroup, tableName string) {
 	defer wg.Done()
 
 	deleteWg := sync.WaitGroup{}
@@ -128,7 +129,7 @@ func levelDeletion(level int, address string, client *api.ApiClient, token strin
 		return
 	}
 
-	fmt.Println("Total items for level", level, ":", totalItems)
+	fmt.Printf("Total words for level %d for table %s : %f\n", level, tableName, totalItems)
 
 	if totalItems <= wordsToDelete {
 		return

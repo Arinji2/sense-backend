@@ -22,7 +22,7 @@ func ResetWords() {
 		for _, level := range levels {
 			wg.Add(1)
 			fmt.Println("Deleting words for level", level)
-			go levelDeletion(level, address, client, token, &wg)
+			go levelDeletion(level, address, client, token, &wg, table)
 		}
 
 	}

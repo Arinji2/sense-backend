@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	cronjobs "github.com/Arinji2/sense-backend/cron-jobs"
-	"github.com/Arinji2/sense-backend/pocketbase"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
@@ -19,11 +18,10 @@ func main() {
 		w.Write([]byte("Sense Backend: Request Received"))
 		render.Status(r, 200)
 
-		token := pocketbase.PocketbaseAdminLogin()
-		fmt.Println(token)
-
 		cronjobs.InsertWords()
+		cronjobs.ResetWords()
 
 	})
+
 	http.ListenAndServe(":3000", r)
 }
