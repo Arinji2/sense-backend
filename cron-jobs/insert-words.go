@@ -25,26 +25,6 @@ type generatedWord struct {
 	level      int
 }
 
-func wordCheck(word generatedWord, token string, table string) bool {
-	client := api.NewApiClient()
-	res, err := client.SendRequestWithQuery("GET", fmt.Sprintf("/api/collections/%s/records", table), map[string]string{
-		"page":    "1",
-		"perPage": "1",
-		"filter":  fmt.Sprintf(`word="%s"`, strings.ToLower(word.word)),
-	}, map[string]string{
-		"Authorization": token,
-	})
-	if err != nil {
-		return true
-	}
-
-	totalItems, ok := res["totalItems"].(float64)
-	if !ok {
-		return true
-	}
-	return totalItems > 0
-}
-
 func InsertWords() {
 
 	fmt.Println("STARTING WORDS INSERTION")
@@ -58,16 +38,25 @@ func InsertWords() {
 	}
 
 	accessKey := os.Getenv("ACCESS_KEY")
+	wordsToGenerate := os.Getenv("WORDS_TO_GENERATE")
+	if wordsToGenerate == "" {
+		wordsToGenerate = "6"
+	}
+
+	wordsToGenerateInt, err := strconv.Atoi(wordsToGenerate)
+	if err != nil {
+		log.Fatal("Error converting WORDS_TO_GENERATE to int")
+	}
 
 	fakeWords := []generatedWord{}
 	realWords := []generatedWord{}
 
-	fakeWordChannel := make(chan generatedWord, 6)
-	realWordChannel := make(chan generatedWord, 6)
+	fakeWordChannel := make(chan generatedWord, wordsToGenerateInt)
+	realWordChannel := make(chan generatedWord, wordsToGenerateInt)
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < 6; i++ {
+	for i := 0; i < wordsToGenerateInt; i++ {
 		wg.Add(1)
 		go func(index int) {
 			defer wg.Done()
@@ -75,7 +64,7 @@ func InsertWords() {
 		}(i)
 	}
 
-	for i := 0; i < 6; i++ {
+	for i := 0; i < wordsToGenerateInt; i++ {
 		wg.Add(1)
 		go func(index int) {
 			defer wg.Done()

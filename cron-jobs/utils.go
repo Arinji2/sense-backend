@@ -5,12 +5,12 @@ import (
 	"log"
 	"math/rand"
 
+	"strings"
+
 	"sync"
 
 	"github.com/Arinji2/sense-backend/api"
 )
-
-const wordsToDelete = 200
 
 func getRandomLetter() string {
 
@@ -108,7 +108,7 @@ func getLevel(table string, token string) difficultyChannel {
 	return selectedDifficulty
 }
 
-func levelDeletion(level int, address string, client *api.ApiClient, token string, wg *sync.WaitGroup, tableName string) {
+func levelDeletion(level int, address string, client *api.ApiClient, token string, wg *sync.WaitGroup, tableName string, wordsToDelete float64) {
 	defer wg.Done()
 
 	deleteWg := sync.WaitGroup{}
@@ -197,4 +197,24 @@ func levelDeletion(level int, address string, client *api.ApiClient, token strin
 
 	deleteWg.Wait()
 
+}
+
+func wordCheck(word generatedWord, token string, table string) bool {
+	client := api.NewApiClient()
+	res, err := client.SendRequestWithQuery("GET", fmt.Sprintf("/api/collections/%s/records", table), map[string]string{
+		"page":    "1",
+		"perPage": "1",
+		"filter":  fmt.Sprintf(`word="%s"`, strings.ToLower(word.word)),
+	}, map[string]string{
+		"Authorization": token,
+	})
+	if err != nil {
+		return true
+	}
+
+	totalItems, ok := res["totalItems"].(float64)
+	if !ok {
+		return true
+	}
+	return totalItems > 0
 }
