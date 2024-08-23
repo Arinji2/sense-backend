@@ -14,15 +14,17 @@ func generateWord(level int, fake bool, accessKey string, response chan<- genera
 	var content string
 	if fake {
 		content = fmt.Sprintf(
-			"Take a word from the english language, modify it in a way so that the new word is a fake made-up word but sounds like a real word. Modify the definition of the old word to make it match the new word and compress it to a maximum of 6 words. Respond with the new word and the definition in a line separated by a semicolon. The amount of modifications must be of a level of difficulty suitable for %s. Make sure the word starts with %s. ",
+			"Take a word from the english language, modify it in a way so that the new word is a fake made-up word but sounds like a real word. Modify the definition of the old word to make it match the new word and compress it to a maximum of 6 words. Respond with the new word and the definition in a line separated by a semicolon. The amount of modifications must be of a level of difficulty suitable for %s. Make sure the word starts with %s. Make sure the word also has %s in it somewhere.",
 			getDifficultyLevel(level),
+			getRandomLetter(),
 			getRandomLetter(),
 		)
 	} else {
 		content = fmt.Sprintf(
-			"Generate a random word with its definition from the English Dictionary. Edit the definition of the word by compressing it to a maximum of 6 words. Respond with the word and the definition in a line separated by a semicolon. The word must be of a level of difficulty suitable for %s. Make sure the word starts with %s.",
+			"Generate a random word with its definition from the English Dictionary. Edit the definition of the word by compressing it to a maximum of 6 words. Respond with the word and the definition in a line separated by a semicolon. The word must be of a level of difficulty suitable for %s. Make sure the word starts with %s. Make sure the word also has %s in it somewhere.",
 
 			getDifficultyLevel(level),
+			getRandomLetter(),
 			getRandomLetter(),
 		)
 	}
