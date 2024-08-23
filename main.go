@@ -35,7 +35,7 @@ func main() {
 		for _, key := range keys {
 			val := strings.Split(key, "=")
 
-			fmt.Println(val[0] + ": " + val[1])
+			fmt.Println(val[0])
 		}
 
 		render.Status(r, 404)
