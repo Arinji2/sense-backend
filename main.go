@@ -29,6 +29,7 @@ func main() {
 	} else {
 		fmt.Println("Using Development Environment")
 	}
+	fmt.Println("Testing CI/CD")
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		key := r.URL.Query()["key"]
 		if len(key) != 0 {
