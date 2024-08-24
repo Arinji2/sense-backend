@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Deploy to Portainer
         run: |
-          response=$(curl -X POST -s -o /dev/null -w "%{http_code}" ${{ secrets.portainer_url }})
+          response=$(curl -X POST -s -o /dev/null -w "%{http_code}" ${{ secrets.PORTAINER_URL }})
           if [ "$response" -eq 204 ]; then
             echo "Notification to Portainer successful with 204 No Content response."
           else
