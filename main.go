@@ -14,9 +14,19 @@ import (
 	"github.com/joho/godotenv"
 )
 
+func SkipLoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/health" {
+			next.ServeHTTP(w, r)
+			return
+		}
+		middleware.Logger(next).ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	r.Use(SkipLoggingMiddleware)
 
 	err := godotenv.Load()
 	if err != nil {
