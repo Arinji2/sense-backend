@@ -18,11 +18,11 @@ type difficultyChannel struct {
 	difficulty int
 }
 
-type generatedWord struct {
-	word       string
-	definition string
-	isFake     bool
-	level      int
+type GeneratedWord struct {
+	Word       string
+	Definition string
+	IsFake     bool
+	Level      int
 }
 
 func InsertWords() {
@@ -44,11 +44,11 @@ func InsertWords() {
 		log.Fatal("Error converting WORDS_TO_GENERATE to int")
 	}
 
-	fakeWords := []generatedWord{}
-	realWords := []generatedWord{}
+	fakeWords := []GeneratedWord{}
+	realWords := []GeneratedWord{}
 
-	fakeWordChannel := make(chan generatedWord, wordsToGenerateInt)
-	realWordChannel := make(chan generatedWord, wordsToGenerateInt)
+	fakeWordChannel := make(chan GeneratedWord, wordsToGenerateInt)
+	realWordChannel := make(chan GeneratedWord, wordsToGenerateInt)
 
 	var wg sync.WaitGroup
 
@@ -87,38 +87,38 @@ func InsertWords() {
 
 	fmt.Println("WORDS GENERATED")
 
-	processWords := func(data []generatedWord) {
+	processWords := func(data []GeneratedWord) {
 		for _, wordData := range data {
 			wg.Add(1)
-			go func(wordData generatedWord) {
+			go func(wordData GeneratedWord) {
 				defer wg.Done()
 
 				var tableName string
 
-				if wordData.isFake {
+				if wordData.IsFake {
 					tableName = "fake_words"
 				} else {
 					tableName = "real_words"
 				}
 
 				exists := wordCheck(wordData, token, tableName)
-				fmt.Println(wordData.word, "exists", exists)
+				fmt.Println(wordData.Word, "exists", exists)
 				if exists {
 					return
 				}
 
 				client := api.NewApiClient()
 				_, err := client.SendRequestWithBody("POST", fmt.Sprintf("/api/collections/%s/records", tableName), map[string]string{
-					"word":       strings.ToLower(wordData.word),
-					"definition": strings.ToLower(wordData.definition),
-					"level":      strconv.Itoa(wordData.level),
+					"word":       strings.ToLower(wordData.Word),
+					"definition": strings.ToLower(wordData.Definition),
+					"level":      strconv.Itoa(wordData.Level),
 				}, map[string]string{
 					"Content-Type":  "application/json",
 					"Authorization": token,
 				})
 
 				if err != nil {
-					fmt.Println("Error posting wordData", wordData.word)
+					fmt.Println("Error posting wordData", wordData.Word)
 				}
 			}(wordData)
 		}

@@ -7,7 +7,7 @@ import (
 	"github.com/Arinji2/sense-backend/api"
 )
 
-func generateWord(level int, fake bool, accessKey string, response chan<- generatedWord, retries int) {
+func generateWord(level int, fake bool, accessKey string, response chan<- GeneratedWord, retries int) {
 
 	client := api.NewApiClient("https://ai.arinji.com")
 
@@ -47,7 +47,7 @@ func generateWord(level int, fake bool, accessKey string, response chan<- genera
 			generateWord(level, fake, accessKey, response, retries-1)
 		} else {
 
-			response <- generatedWord{word: "FAIL", definition: "FAIL", isFake: fake}
+			response <- GeneratedWord{Word: "FAIL", Definition: "FAIL", IsFake: fake}
 		}
 		return
 	}
@@ -58,7 +58,7 @@ func generateWord(level int, fake bool, accessKey string, response chan<- genera
 		if retries > 0 {
 			generateWord(level, fake, accessKey, response, retries-1)
 		} else {
-			response <- generatedWord{word: "FAIL", definition: "FAIL", isFake: fake}
+			response <- GeneratedWord{Word: "FAIL", Definition: "FAIL", IsFake: fake}
 		}
 		return
 	}
@@ -68,7 +68,7 @@ func generateWord(level int, fake bool, accessKey string, response chan<- genera
 		if retries > 0 {
 			generateWord(level, fake, accessKey, response, retries-1)
 		} else {
-			response <- generatedWord{word: "FAIL", definition: "FAIL", isFake: fake}
+			response <- GeneratedWord{Word: "FAIL", Definition: "FAIL", IsFake: fake}
 		}
 		return
 	}
@@ -76,10 +76,10 @@ func generateWord(level int, fake bool, accessKey string, response chan<- genera
 	word := strings.TrimSpace(parts[0])
 	definition := strings.TrimSpace(parts[1])
 
-	response <- generatedWord{
-		word:       word,
-		definition: definition,
-		isFake:     fake,
-		level:      level,
+	response <- GeneratedWord{
+		Word:       word,
+		Definition: definition,
+		IsFake:     fake,
+		Level:      level,
 	}
 }

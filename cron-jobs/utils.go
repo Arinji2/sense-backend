@@ -30,11 +30,11 @@ func getDifficultyLevel(level int) string {
 	}
 }
 
-func filterWords(words []generatedWord) []generatedWord {
-	var filteredWords []generatedWord
+func filterWords(words []GeneratedWord) []GeneratedWord {
+	var filteredWords []GeneratedWord
 
 	for _, word := range words {
-		if word.word == "FAIL" {
+		if word.Word == "FAIL" {
 			continue
 		}
 		filteredWords = append(filteredWords, word)
@@ -199,12 +199,12 @@ func levelDeletion(level int, address string, client *api.ApiClient, token strin
 
 }
 
-func wordCheck(word generatedWord, token string, table string) bool {
+func wordCheck(word GeneratedWord, token string, table string) bool {
 	client := api.NewApiClient()
 	res, err := client.SendRequestWithQuery("GET", fmt.Sprintf("/api/collections/%s/records", table), map[string]string{
 		"page":    "1",
 		"perPage": "1",
-		"filter":  fmt.Sprintf(`word="%s"`, strings.ToLower(word.word)),
+		"filter":  fmt.Sprintf(`word="%s"`, strings.ToLower(word.Word)),
 	}, map[string]string{
 		"Authorization": token,
 	})
