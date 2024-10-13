@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -57,7 +58,9 @@ func main() {
 
 	go startCronJob()
 
-	http.ListenAndServe(":8080", r)
+	if err := http.ListenAndServe(":8080", r); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Fatalf("listen: %s\n", err)
+	}
 }
 
 func startCronJob() {
