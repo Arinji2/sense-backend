@@ -14,19 +14,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func SkipLoggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/health" {
-			next.ServeHTTP(w, r)
-			return
-		}
-		middleware.Logger(next).ServeHTTP(w, r)
-	})
-}
-
 func main() {
 	r := chi.NewRouter()
-	r.Use(SkipLoggingMiddleware)
 
 	err := godotenv.Load()
 	if err != nil {
@@ -40,18 +29,24 @@ func main() {
 		fmt.Println("Using Development Environment")
 	}
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		key := r.URL.Query()["key"]
-		if len(key) != 0 {
-			if key[0] == os.Getenv("ACCESS_KEY") {
-				fmt.Println("RUNNING TASKS")
-				cronjobs.InsertWords()
-				cronjobs.ResetWords()
+	r.Group(func(r chi.Router) {
+		// Only routes within this group will be logged. We don't want to log health checks, as they
+		// are too frequent.
+		r.Use(middleware.Logger)
+
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			key := r.URL.Query()["key"]
+			if len(key) != 0 {
+				if key[0] == os.Getenv("ACCESS_KEY") {
+					fmt.Println("RUNNING TASKS")
+					cronjobs.InsertWords()
+					cronjobs.ResetWords()
+				}
 			}
-		}
-		fmt.Println("Sense Backend: Request Received")
-		w.Write([]byte("Sense Backend: Request Received"))
-		render.Status(r, 200)
+			fmt.Println("Sense Backend: Request Received")
+			w.Write([]byte("Sense Backend: Request Received"))
+			render.Status(r, 200)
+		})
 	})
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
