@@ -66,14 +66,24 @@ func main() {
 }
 
 func startCronJob() {
-	ticker := time.NewTicker(1 * time.Hour)
-	defer ticker.Stop()
+	go func() {
+		ticker := time.NewTicker(30 * time.Minute)
+		defer ticker.Stop()
 
-	for range ticker.C {
+		for range ticker.C {
+			fmt.Println("Running 30 mins cron job")
+			cronjobs.InsertWords()
+			cronjobs.ResetWords()
+		}
+	}()
 
-		fmt.Println("Running hourly cron job")
-		cronjobs.InsertWords()
-		cronjobs.ResetWords()
+	go func() {
+		cleanupTicker := time.NewTicker(1 * time.Minute)
+		defer cleanupTicker.Stop()
 
-	}
+		for range cleanupTicker.C {
+			fmt.Println("Running cleanup cron job")
+			cronjobs.VerifyFakeWords()
+		}
+	}()
 }
