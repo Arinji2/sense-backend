@@ -2,10 +2,9 @@ package pocketbase
 
 import (
 	"log"
+	"os"
 	"sync"
 	"time"
-
-	"os"
 
 	"github.com/Arinji2/sense-backend/api"
 	"github.com/joho/godotenv"
@@ -20,7 +19,6 @@ var (
 const tokenValidity = 604800 * time.Second // 7 days
 
 func PocketbaseAdminLogin() string {
-
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -33,7 +31,6 @@ func PocketbaseAdminLogin() string {
 
 	if identityEmail == "" || password == "" {
 		log.Fatal("Environment Variables not present to authenticate Admin")
-
 	}
 
 	body := map[string]string{
@@ -42,8 +39,7 @@ func PocketbaseAdminLogin() string {
 	}
 
 	client := api.NewApiClient()
-	result, err := client.SendRequestWithBody("POST", "/api/admins/auth-with-password", body, nil)
-
+	result, err := client.SendRequestWithBody("POST", "/api/collections/_superusers/auth-with-password", body, nil)
 	if err != nil {
 		log.Fatalf("Login failed: %v", err)
 	}
@@ -56,5 +52,4 @@ func PocketbaseAdminLogin() string {
 	expiryCache = time.Now().Add(tokenValidity)
 
 	return token
-
 }
