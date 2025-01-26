@@ -1,6 +1,9 @@
 # Use the official Go image as a build stage
 FROM golang:1.23.0-alpine AS builder
 
+# Add a label to the Repo
+LABEL org.opencontainers.image.source="https://github.com/Arinji2/sense-backend"
+
 # Set the working directory inside the container
 WORKDIR /app
 
